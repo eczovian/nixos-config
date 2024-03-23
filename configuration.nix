@@ -71,7 +71,6 @@ in
 	    # (pkgs.writeShellScriptBin "my-hello" ''
 	    #   echo "Hello, ${config.home.username}!"
 	    # '')
-	     
 	     xclip
 	     pure-prompt
 	     ripgrep
@@ -82,7 +81,7 @@ in
 	     neovim
 	     wget
 	     curl
-	     ]; 
+          ]; 
 	  # Home Manager is pretty good at managing dotfiles. The primary way to manage
 	  # plain files is through 'home.file'.
 	  home.file = {
@@ -151,7 +150,7 @@ in
 	    };
       tmux = {
 	shell = "${pkgs.zsh}/bin/zsh";
-	escapeTime = "50";
+	escapeTime = 50;
 	enable = true;
 	baseIndex = 1;
 	newSession = true;
