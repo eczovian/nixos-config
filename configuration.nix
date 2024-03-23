@@ -149,6 +149,33 @@ in
 		plugins = ["git" "rust" "history"];
 	      };
 	    };
+      tmux = {
+	shell = "${pkgs.zsh}/bin/zsh";
+	escapeTime = "50";
+	enable = true;
+	baseIndex = 1;
+	newSession = true;
+	mouse = true;
+	prefix = "C-space";
+	terminal = "screen-256color";
+	disableConfirmationPrompt = true;
+	plugins = with pkgs.tmuxPlugins; 
+	[
+	   sensible
+	   vim-tmux-navigator
+	   catppuccin
+	   yank
+	];
+	keyMode = "vi";
+	extraConfig = ''
+	set -g @catppuccin_flavour 'mocha'
+	bind | split-window -h -c "#{pane_current_path}"
+	bind _ split-window -v -c "#{pane_current_path}"
+	bind-key -T copy-mode-vi v send-keys -X begin-selection
+	bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
+	bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+	'';
+      };
 	  };
 	};
 }
