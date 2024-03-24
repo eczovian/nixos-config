@@ -21,6 +21,7 @@ in
     (import "${home-manager}/nixos")
   ];
   programs.zsh.enable = true;
+  users.defaultUserShell = pkgs.zsh;
   users.users = {
     lohsey = {
       initialPassword = "ThisIsAnInitialPassword";
@@ -127,10 +128,78 @@ in
 	  programs.home-manager.enable = true;
 	  programs = {
 	    nixvim = {
+	      luaLoader.enable = true;
 	      vimAlias = true;
 	      viAlias = true;
-	      enable = true;
 	      colorschemes.catppuccin.enable = true;
+	      globals = {
+		mapleader = " ";
+		maplocalleader = " ";
+	      };
+	      enable = true;
+	      options = {
+		colorcolumn = "100";
+		mouse = "a";
+	        number = true;
+	        relativenumber = true;
+	        shiftwidth = 2;
+		autoindent = true;
+		swapfile = false;
+	      };
+	      plugins = {
+		harpoon = {
+		  enable = true;
+		};
+		lualine = {
+		 enable = true;
+		};
+	        lsp = {
+	          enable = true;
+		  servers = {
+		    rust-analyzer= {
+                      enable = true;
+		      installRustc = true;
+		      installCargo = true;
+		    };
+		  };
+	        };
+		luasnip.enable = true;
+		lsp-format = {
+		  enable = true;
+		};
+		lspkind = {
+		  enable = true;
+		  cmp = {
+		    enable = true;
+		    menu = {
+		      nvim_lsp = "[LSP]";
+		      nvim_lua = "[api]";
+		      path = "[path]";
+		      luasnip = "[snip]";
+		      buffer = "[buffer]";
+		      neorg = "[neorg]";
+		      cmp_tabnine = "[TabNine]";
+		    };
+		  };
+		};
+		nvim-cmp = {
+		  enable = true;
+		  snippet.expand = "luasnip";
+		  sources = [
+		    {name = "path";}
+		    {name = "nvim_lsp";}
+		    {name = "luasnip";}
+		    {
+		      name = "buffer";
+		      # Words from other open buffers can also be suggested.
+		      option.get_bufnrs.__raw = "vim.api.nvim_list_bufs";
+		    }
+		  ];
+		};
+		which-key = {
+		  enable = true;
+		};
+	      };
 	    };
 	    git = {
 	      enable = true;
