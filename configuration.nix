@@ -8,7 +8,11 @@
 { config, lib, pkgs, ... }:
 
 let
-  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.11.tar.gz";
+  nixvim = import (builtins.fetchGit {
+    url = "https://github.com/nix-community/nixvim";
+    ref = "nixos-23.11";
+  });
 in
 {
   imports = [
@@ -38,6 +42,9 @@ in
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.11"; # Did you read the comment?
   home-manager.users.lohsey = {
+  	  imports = [
+	  	nixvim.homeManagerModules.nixvim
+	  ];
 	  # Home Manager needs a bit of information about you and the paths it should
 	  # manage.
 	  home.username = "lohsey";
@@ -73,14 +80,15 @@ in
 	    # '')
 	     xclip
 	     pure-prompt
+	     python311Packages.pynvim
 	     ripgrep
 	     nodejs
 	     rustup
 	     python313
 	     poetry
-	     neovim
 	     wget
 	     curl
+	     gcc
           ]; 
 	  # Home Manager is pretty good at managing dotfiles. The primary way to manage
 	  # plain files is through 'home.file'.
@@ -96,7 +104,6 @@ in
 	    #   org.gradle.daemon.idletimeout=3600000
 	    # '';
 	  };
-
 	  # Home Manager can also manage your environment variables through
 	  # 'home.sessionVariables'. If you don't want to manage your shell through Home
 	  # Manager then you have to manually source 'hm-session-vars.sh' located at
@@ -119,6 +126,12 @@ in
 	  # Let Home Manager install and manage itself.
 	  programs.home-manager.enable = true;
 	  programs = {
+	    nixvim = {
+	      vimAlias = true;
+	      viAlias = true;
+	      enable = true;
+	      colorschemes.catppuccin.enable = true;
+	    };
 	    git = {
 	      enable = true;
 	      userName = "eczovian";
@@ -132,7 +145,7 @@ in
 	    zsh = {
 	      enable = true;
 	      enableCompletion = true;
-	      autosuggestion.enable = true;
+	      enableAutosuggestions = true;
 	      syntaxHighlighting.enable = true;
 	      initExtra =''
 		autoload -U promptinit; promptinit
@@ -148,33 +161,33 @@ in
 		plugins = ["git" "rust" "history"];
 	      };
 	    };
-      tmux = {
-	shell = "${pkgs.zsh}/bin/zsh";
-	escapeTime = 50;
-	enable = true;
-	baseIndex = 1;
-	newSession = true;
-	mouse = true;
-	prefix = "C-space";
-	terminal = "screen-256color";
-	disableConfirmationPrompt = true;
-	plugins = with pkgs.tmuxPlugins; 
-	[
-	   sensible
-	   vim-tmux-navigator
-	   catppuccin
-	   yank
-	];
-	keyMode = "vi";
-	extraConfig = ''
-	set -g @catppuccin_flavour 'mocha'
-	bind | split-window -h -c "#{pane_current_path}"
-	bind _ split-window -v -c "#{pane_current_path}"
-	bind-key -T copy-mode-vi v send-keys -X begin-selection
-	bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
-	bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
-	'';
-      };
+	    #tmux = {
+		#shell = "${pkgs.zsh}/bin/zsh";
+		#escapeTime = 70;
+		#enable = true;
+		#baseIndex = 1;
+		#newSession = true;
+		#mouse = true;
+		#prefix = "C-space";
+		#terminal = "xterm-256color";
+		#disableConfirmationPrompt = true;
+		#plugins = with pkgs.tmuxPlugins; 
+		#[
+		   #sensible
+		   #vim-tmux-navigator
+		   #catppuccin
+		   #yank
+		#];
+		#keyMode = "vi";
+		#extraConfig = ''
+		#set -g @catppuccin_flavour 'mocha'
+		#bind | split-window -h -c "#{pane_current_path}"
+		#bind _ split-window -v -c "#{pane_current_path}"
+		#bind-key -T copy-mode-vi v send-keys -X begin-selection
+		#bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
+		#bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+		#'';
+		#      };
 	  };
 	};
 }
